@@ -1,12 +1,20 @@
-import { useState } from "react";
-import { getMetricConfig } from "../constants/metrics";
-import { formatTime, formatDate } from "../utils/dateUtils";
+import { useMemo, useState } from "react";
+import { buttonStyle, cardLayoutStyle, getMetricConfig } from "../constants/metrics";
+import { formatTime, formatDate, isWithinToday } from "../utils/dateUtils";
 import { FaEdit, FaSave, FaTrash } from "react-icons/fa";
 import { LuList, LuX } from "react-icons/lu";
 
 export const MetricsTable = ({ data, onUpdate, onDelete }) => {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState("");
+  const [tableType, setTableType] = useState("all");
+
+  const displayedData = useMemo(() => {
+  return tableType === "today"
+    ? data.filter((item) => isWithinToday(item.timestamp))
+    : data;
+}, [tableType, data]);
+
 
   const handleEdit = (item) => {
     setEditingId(item.id);
@@ -32,7 +40,7 @@ export const MetricsTable = ({ data, onUpdate, onDelete }) => {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-200">
         <div className="flex items-center justify-center h-32 text-gray-500 dark:text-gray-400">
           <div className="text-center">
-            <LuList className="w-12 h-12 mx-auto mb-2 opacity-50" />
+            <LuList className="text-5xl mx-auto mb-2 opacity-50" />
             <p>No health metrics found for the selected filters</p>
           </div>
         </div>
@@ -41,14 +49,37 @@ export const MetricsTable = ({ data, onUpdate, onDelete }) => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-md p-6 transition-colors duration-200">
-      <div className="flex justify-between items-center">
-        <p className=" text-center w-full sm:text-left text-xl ">
-          Health Data ({data.length} entries)
-        </p>
-        <div className="p-2 bg-red-50 dark:bg-red-900/30 rounded-md">
-          <LuList className="text-xl text-red-400" />
+    <div className={cardLayoutStyle}>
+      <div className="flex flex-col gap-4 sm:flex-row justify-between items-center">
+        <div className="flex items-center w-full sm:text-left text-xl font-bold ">
+          <div className="p-2 mr-2 bg-red-50 dark:bg-red-900/30 rounded-md">
+            <LuList className="text-2xl text-red-400" />
+          </div>
+          Health Data ({displayedData.length} entries)
         </div>
+        <div className="flex gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                  <button
+                    onClick={() => setTableType("all")}
+                    className={`${buttonStyle} ${
+                      tableType === "all"
+                        ? "bg-white dark:bg-gray-600 text-red-600 dark:text-red-400 shadow-sm"
+                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setTableType("today")}
+                    className={`${buttonStyle} ${
+                      tableType === "today"
+                        ? "bg-white dark:bg-gray-600 text-red-600 dark:text-red-400 shadow-sm"
+                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    Today
+                  </button>
+                </div>
+        
       </div>
       <div className="bg-red-100 rounded-md w-full h-1 my-4" />
 
@@ -78,7 +109,7 @@ export const MetricsTable = ({ data, onUpdate, onDelete }) => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item, index) => {
+            {displayedData.map((item, index) => {
               const config = getMetricConfig(item.type);
               const isEditing = editingId === item.id;
 

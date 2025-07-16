@@ -1,5 +1,5 @@
 import { FaDownload, FaFilter } from "react-icons/fa";
-import { buttonStyle, dropDownStyle, metrics } from "../constants/metrics";
+import { submitButtonStyle, cardLayoutStyle, dropDownStyle, metrics } from "../constants/metrics";
 
 export const MetricFilters = ({ filters, onFiltersChange, onExportCSV }) => {
   const updateFilter = (key, value) => {
@@ -8,9 +8,9 @@ export const MetricFilters = ({ filters, onFiltersChange, onExportCSV }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-md p-6 transition-colors duration-200">
+    <div className={cardLayoutStyle}>
       <div className="flex justify-between items-center">
-        <p className=" text-center w-full sm:text-left text-xl ">
+        <p className="w-full text-left text-xl font-bold">
           Filters & Controls
         </p>
         <div className="p-2 bg-red-50 dark:bg-red-900/30 rounded-md">
@@ -92,7 +92,7 @@ export const MetricFilters = ({ filters, onFiltersChange, onExportCSV }) => {
           <label htmlFor="download" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Actions
           </label>
-          <button id="download" onClick={onExportCSV} className={buttonStyle}>
+          <button id="download" onClick={onExportCSV} className={submitButtonStyle}>
             <FaDownload className="w-4 h-4" />
             Export CSV
           </button>

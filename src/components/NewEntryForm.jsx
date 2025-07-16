@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { buttonStyle, dropDownStyle, metrics } from "../constants/metrics";
+import { submitButtonStyle, dropDownStyle, metrics } from "../constants/metrics";
 import { IoAdd } from "react-icons/io5";
 import { getLocalDateTime } from "../utils/dateUtils";
 
@@ -25,9 +25,9 @@ export function NewEntryForm({ addNewEntry }) {
   }
 
   return (
-    <div className="bg-white md:min-w-[350px] lg:min-w-[600px] max-w-[750px] text-black dark:text-white dark:bg-gray-800 p-4 shadow-lg rounded-md">
+    <div className={"bg-white md:min-w-[350px] lg:min-w-[600px] max-w-[750px] hover:shadow-xl border border-gray-100 dark:border-gray-700 text-black dark:text-white dark:bg-gray-800 p-4 shadow-lg rounded-xl"}>
       <div className="flex justify-between items-center">
-        <p className=" text-center w-full sm:text-left text-xl ">
+        <p className="w-full text-left text-xl font-bold">
           Add New Metric
         </p>
         <div className="p-2 bg-red-50 dark:bg-red-900/30 rounded-md">
@@ -57,12 +57,13 @@ export function NewEntryForm({ addNewEntry }) {
 
         <div>
           <label htmlFor="value" className="block">
-            Value in {metricConfig.unit}
+            Value ({metricConfig.unit})
           </label>
           <input
             id="value"
             name="value"
             type="number"
+            placeholder={`Enter ${metricConfig.label}`}
             value={formData.value}
             onChange={onChange}
             className={`${dropDownStyle}`}
@@ -86,7 +87,7 @@ export function NewEntryForm({ addNewEntry }) {
         <button
           type="button"
           onClick={onSubmit}
-          className={buttonStyle}
+          className={submitButtonStyle}
         >
           Add Record
         </button>

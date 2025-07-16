@@ -27,7 +27,6 @@ export function Main() {
       ...metric,
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
     };
-    console.log("➕ Adding new entry:", newMetric);
     setData((prev) => [...prev, newMetric]);
   }
   const updateMetric = (id, updates) => {
@@ -40,7 +39,7 @@ export function Main() {
     setData((prev) => prev.filter((item) => item.id !== id));
   };
   const getFilteredData = () => {
-    let filtered = data.filter((item) => isWithinToday(item.timestamp));
+    let filtered = data;
 
     if (filters.selectedMetric !== "all") {
       filtered = filtered.filter(
@@ -67,9 +66,8 @@ export function Main() {
     return filtered;
   };
 
-  const getTodayData = () => {
-    return data.filter((item) => isWithinToday(item.timestamp));
-  };
+  const filteredData = getFilteredData();
+  const chartData = filteredData.filter((item) => isWithinToday(item.timestamp)) ?? [];
 
   const handleExportCSV = () => {
     exportToCSV(getFilteredData());
@@ -96,14 +94,14 @@ export function Main() {
         onExportCSV={handleExportCSV}
       />
       <MetricChart
-        data={getFilteredData()}
+        data={chartData}
         selectedMetric={filters.selectedMetric}
         chartType={chartType}
         onChartTypeChange={setChartType}
         filters={filters}
       />
       <MetricsTable
-        data={getFilteredData()}
+        data={filteredData}
         onUpdate={updateMetric}
         onDelete={deleteMetric}
       />

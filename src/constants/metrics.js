@@ -43,7 +43,7 @@ export const metrics = [
     icon: '👟'
   },
   {
-    key: 'water',
+    key: 'waterIntake',
     label: 'Water Intake',
     unit: 'ml',
     color: '#1c398e',
@@ -69,5 +69,8 @@ export const getMetricConfig = (type) => {
   return metrics.find(m => m.key === type) || metrics[0];
 };
 
-export const buttonStyle="w-full mt-2 bg-red-400 hover:bg-red-700 cursor-pointer text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2";
+export const buttonStyle="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer";
+export const submitButtonStyle="w-full mt-2 bg-red-400 hover:bg-red-700 cursor-pointer text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2";
+
+export const cardLayoutStyle= "bg-white dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl border border-gray-100 dark:border-gray-700";
 export const dropDownStyle ="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"
