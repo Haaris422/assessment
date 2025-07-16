@@ -2,11 +2,11 @@ import { statCards } from "../constants/metrics";
 
 export function AvgStatsCards() {
   return (
-    <div className="w-full flex flex-wrap justify-center md:justify-between gap-8 sm:gap-4">
+    <div className="w-full flex flex-wrap justify-center md:justify-evenly gap-8 sm:gap-4">
       {statCards.map((stat) => (
         <div
           key={stat.name}
-          className="relative rounded-md flex min-w-[150px] sm:min-w-[280px] justify-between 
+          className="relative rounded-md max-h-[150px] flex min-w-[150px] sm:min-w-[280px] justify-between 
            items-center py-4 px-2 sm:p-4 bg-white dark:bg-gray-800 shadow-lg"
         >
           <div className="text-black text-center w-full sm:text-left mt-4 sm:mt-0 dark:text-white sm:mr-2">

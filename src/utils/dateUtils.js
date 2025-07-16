@@ -16,7 +16,9 @@ export const formatDate = (date) => {
 };
 
 export const getTimeOfDay = (date) => {
-  const hour = date.getHours();
+  let d = new Date(date);
+  console.log('getTimeOfDay: ', date, d);
+  const hour = d.getHours();
   if (hour < 12) return 'morning';
   if (hour < 18) return 'afternoon';
   return 'evening';

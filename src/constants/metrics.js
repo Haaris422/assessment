@@ -34,37 +34,40 @@ export const statCards = [
     },
 ];
 
-export const fields = [
+export const metrics = [
   {
     key: 'steps',
     label: 'Steps',
     unit: 'steps',
-    color: '#3B82F6',
+    color: '#733e0a',
     icon: '👟'
   },
   {
     key: 'water',
     label: 'Water Intake',
     unit: 'ml',
-    color: '#06B6D4',
+    color: '#1c398e',
     icon: '💧'
   },
   {
     key: 'heartRate',
     label: 'Heart Rate',
     unit: 'bpm',
-    color: '#EF4444',
+    color: '#82181a',
     icon: '❤️'
   },
   {
     key: 'calorieIntake',
     label: 'Calorie Intake',
     unit: 'kcal',
-    color: '#8B5CF6',
+    color: '#0d542b',
     icon: '⚖️'
   },
 ];
 
 export const getMetricConfig = (type) => {
-  return fields.find(m => m.key === type) || fields[0];
+  return metrics.find(m => m.key === type) || metrics[0];
 };
+
+export const buttonStyle="w-full mt-2 bg-red-400 hover:bg-red-700 cursor-pointer text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center gap-2";
+export const dropDownStyle ="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"

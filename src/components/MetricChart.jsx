@@ -2,28 +2,43 @@ import { useMemo } from "react";
 import { IoBarChart, IoTrendingUp } from "react-icons/io5";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { formatTime } from "../utils/dateUtils";
-import { getMetricConfig } from "../constants/metrics";
+import { buttonStyle, getMetricConfig } from "../constants/metrics";
 
 export function MetricChart({
   data,
   chartType,
   selectedMetric,
   onChartTypeChange,
+  filters,
 }) {
   const chartData = useMemo(() => {
-    let filteredData = data;
-    if (selectedMetric !== "all") {
-      filteredData = data.filter((item) => item.type === selectedMetric);
-    }
-    const processedData = filteredData
-      .map((item) => ({
-        timestamp: formatTime(item.timestamp),
-        value: item.value,
-        hour: new Date(item.timestamp).getHours(),
-      }))
-      .sort((a, b) => a.hour - b.hour);
-    return processedData;
-  }, [data, selectedMetric]);
+  let filteredData = data;
+
+  if (selectedMetric !== "all") {
+    filteredData = data.filter((item) => item.type === selectedMetric);
+  }
+
+  const processedData = filteredData.map((item) => ({
+    timestamp: formatTime(item.timestamp),
+    value: item.value,
+    hour: new Date(item.timestamp).getTime(),
+  }));
+
+  if (filters?.sortOrder !== '') {
+    processedData.sort((a, b) => {
+      if (filters.sortBy === 'timestamp') {
+        return filters.sortOrder === 'asc' ? a.hour - b.hour : b.hour - a.hour;
+      } else {
+        return filters.sortOrder === 'asc'
+          ? a.value - b.value
+          : b.value - a.value;
+      }
+    });
+  }
+
+  return processedData;
+}, [data, selectedMetric, filters]);
+
 
   const metricConfig =
     selectedMetric !== "all" ? getMetricConfig(selectedMetric) : null;
@@ -43,12 +58,11 @@ export function MetricChart({
     );
   }
 
-  const tabClass = `p-1 rounded-md hover:opacity-85 cursor-pointer`;
   return (
     <div className="bg-white w-full text-black dark:text-white dark:bg-gray-800 p-4 shadow-lg rounded-md">
       <div className="flex justify-between items-center">
         <div className="flex items-center text-center w-full sm:text-left text-xl ">
-          <div className="p-2 mr-2 bg-red-50 dark:bg-red-900/30 rounded-md">
+          <div className="px-2 py-1 mr-2 bg-red-50 dark:bg-red-900/30 rounded-md">
             <IoTrendingUp className="text-2xl text-red-400" />
           </div>
           Wellness Visualization
@@ -59,7 +73,7 @@ export function MetricChart({
             className={`${
               chartType == "line" ? "bg-red-400" : "bg-white dark:bg-gray-900"
             }
-            ${tabClass}`}
+            ${buttonStyle}`}
           >
             Line
           </button>
@@ -68,13 +82,13 @@ export function MetricChart({
             className={`${
               chartType == "bar" ? "bg-red-400" : "bg-white dark:bg-gray-900"
             }
-            ${tabClass}`}
+            ${buttonStyle}`}
           >
             Bar
           </button>
         </div>
       </div>
-      <div className="bg-red-100 rounded-md w-full h-1 my-4" />
+      <div className="bg-red-100 rounded-md w-full h-1 my-3" />
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           {chartType === 'line' ? (

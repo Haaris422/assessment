@@ -3,6 +3,9 @@ import { AvgStatsCards } from "./AvgStatsCards";
 import { NewEntryForm } from "./NewEntryForm";
 import { MetricChart } from "./MetricChart";
 import { filterByTimeOfDay, isWithinToday } from "../utils/dateUtils";
+import { MetricFilters } from "./MetricFilters";
+import { exportToCSV } from "../utils/metricsUtils";
+import { MetricsTable } from "./MetricsTable";
 
 export function Main() {
   const [chartType, setChartType] = useState("line");
@@ -15,7 +18,7 @@ export function Main() {
   const [filters, setFilters] = useState({
     timeOfDay: "all",
     sortBy: "timestamp",
-    sortOrder: "desc",
+    sortOrder: "asc",
     selectedMetric: "all",
   });
 
@@ -27,7 +30,15 @@ export function Main() {
     console.log("➕ Adding new entry:", newMetric);
     setData((prev) => [...prev, newMetric]);
   }
+  const updateMetric = (id, updates) => {
+    setData((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
+    );
+  };
 
+  const deleteMetric = (id) => {
+    setData((prev) => prev.filter((item) => item.id !== id));
+  };
   const getFilteredData = () => {
     let filtered = data.filter((item) => isWithinToday(item.timestamp));
 
@@ -39,17 +50,19 @@ export function Main() {
 
     filtered = filterByTimeOfDay(filtered, filters.timeOfDay);
 
-    filtered.sort((a, b) => {
-      if (filters.sortBy === "timestamp") {
-        const timeA = new Date(a.timestamp).getTime();
-        const timeB = new Date(b.timestamp).getTime();
-        return filters.sortOrder === "asc" ? timeA - timeB : timeB - timeA;
-      } else {
-        return filters.sortOrder === "asc"
-          ? a.value - b.value
-          : b.value - a.value;
-      }
-    });
+    if (filters.sortOrder !== "") {
+      filtered.sort((a, b) => {
+        if (filters.sortBy === "timestamp") {
+          const timeA = new Date(a.timestamp).getTime();
+          const timeB = new Date(b.timestamp).getTime();
+          return filters.sortOrder === "asc" ? timeA - timeB : timeB - timeA;
+        } else {
+          return filters.sortOrder === "asc"
+            ? a.value - b.value
+            : b.value - a.value;
+        }
+      });
+    }
 
     return filtered;
   };
@@ -58,23 +71,42 @@ export function Main() {
     return data.filter((item) => isWithinToday(item.timestamp));
   };
 
+  const handleExportCSV = () => {
+    exportToCSV(getFilteredData());
+  };
+
   useEffect(() => {
     console.log("Saving to localStorage:", data);
     localStorage.setItem("health-metrics", JSON.stringify(data));
   }, [data]);
 
+  useEffect(() => {
+    console.log("useEffect: on changing filters: ", getFilteredData());
+  }, [filters]);
+
   return (
     <div className="space-y-12">
-      <AvgStatsCards data={data} />
-      <div className="flex gap-4 w-full">
+      <div className="flex flex-col md:flex-row gap-4 w-full">
         <NewEntryForm addNewEntry={addNewEntry} />
-        <MetricChart
-          data={getFilteredData()}
-          selectedMetric={filters.selectedMetric}
-          chartType={chartType}
-          onChartTypeChange={setChartType}
-        />
+        <AvgStatsCards data={data} />
       </div>
+      <MetricFilters
+        filters={filters}
+        onFiltersChange={setFilters}
+        onExportCSV={handleExportCSV}
+      />
+      <MetricChart
+        data={getFilteredData()}
+        selectedMetric={filters.selectedMetric}
+        chartType={chartType}
+        onChartTypeChange={setChartType}
+        filters={filters}
+      />
+      <MetricsTable
+        data={getFilteredData()}
+        onUpdate={updateMetric}
+        onDelete={deleteMetric}
+      />
     </div>
   );
 }
