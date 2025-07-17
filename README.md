@@ -3,19 +3,19 @@
 This is a health metrics tracking application. It allows users to record and visualize health-related data (e.g., pulse, sugar, weight, etc.) over time. Entries are grouped by timestamp, and users can expand/collapse these groups, filter them or edit/delete them individually or by group. A Bar and a Line chart are also provided for better visualization.
 
 
-🚀 Cloning & Setup
+# Cloning & Setup 🚀
 
-# Clone the repository
+1. Clone the repository
 git clone https://github.com/Haaris422/assessment.git
 
-# Install dependencies
+2. Install dependencies
 npm install
 
-# Start the development server
+3. Start the development server
 npm run dev
 
 
-📦 Libraries Used & Why
+# Libraries Used & Why 📦
 
 | Library          | Purpose                                                                                                      |
 | ---------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -28,7 +28,7 @@ npm run dev
 | **ESLint**       | Maintains code quality and consistency across the codebase with recommended rules.                           |
 
 
-🎨 Design Philosophy
+# Design Philosophy 🎨
 
 Simplicity and Clarity: The interface is kept minimal and intuitive, with clear grouping of metrics by timestamp and visible control buttons for editing or deleting.
 
