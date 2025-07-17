@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { IoBarChart, IoTrendingUp } from "react-icons/io5";
 import {
   LineChart,
@@ -10,10 +9,11 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  Legend,
 } from "recharts";
-import { formatTime } from "../utils/dateUtils";
-import { buttonStyle, cardLayoutStyle, getMetricConfig, metrics } from "../constants/metrics";
+import { buttonStyle, cardLayoutStyle, getMetricConfig } from "../constants/metrics";
+import { useChartData } from "../hooks/useChartData";
+import { useActiveMetrics } from "../hooks/useActiveMetrics";
+import { ChartTooltip } from "./ChartTooltip";
 
 export function MetricChart({
   data,
@@ -22,146 +22,10 @@ export function MetricChart({
   onChartTypeChange,
   filters,
 }) {
-  const chartData = useMemo(() => {
-    let filteredData = data;
+  const chartData = useChartData(data, selectedMetric, filters);
 
-    if (selectedMetric !== "all") {
-      filteredData = data.filter((item) => item.type === selectedMetric);
-    }
 
-    const groupedData = new Map();
-
-    filteredData.forEach((item) => {
-      const timeKey = formatTime(item.timestamp);
-      const metricConfig = getMetricConfig(item.type);
-
-      if (!groupedData.has(timeKey)) {
-        groupedData.set(timeKey, new Map());
-      }
-
-      const timeGroup = groupedData.get(timeKey);
-      if (!timeGroup.has(item.type)) {
-        timeGroup.set(item.type, { values: [], config: metricConfig });
-      }
-
-      timeGroup.get(item.type).values.push(item.value);
-    });
-
-    const processedData = Array.from(groupedData.entries())
-      .map(([timeKey, metricGroups]) => {
-        const dataPoint = {
-          timestamp: timeKey,
-          hour: parseInt(timeKey.split(":")[0]),
-        };
-
-        metricGroups.forEach((metricData, metricType) => {
-          const avgValue =
-            metricData.values.length > 1
-              ? Math.round(
-                  (metricData.values.reduce((sum, val) => sum + val, 0) /
-                    metricData.values.length) *
-                    100
-                ) / 100
-              : metricData.values[0];
-
-          dataPoint[metricType] = avgValue;
-          dataPoint[`${metricType}_count`] = metricData.values.length;
-          dataPoint[`${metricType}_values`] = metricData.values;
-          dataPoint[`${metricType}_config`] = metricData.config;
-        });
-
-        return dataPoint;
-      })
-      .sort((a, b) => {
-        if (filters?.sortBy === "timestamp") {
-          return filters.sortOrder === "asc"
-            ? a.hour - b.hour
-            : b.hour - a.hour;
-        }
-        return a.hour - b.hour;
-      });
-
-    return processedData;
-  }, [data, selectedMetric, filters]);
-
-  const getActiveMetrics = () => {
-    if (selectedMetric !== "all") {
-      return [selectedMetric];
-    }
-
-    const activeMetrics = new Set();
-    chartData.forEach((dataPoint) => {
-      metrics.forEach((metric) => {
-        if (dataPoint[metric.key] !== undefined) {
-          activeMetrics.add(metric.key);
-        }
-      });
-    });
-
-    return Array.from(activeMetrics);
-  };
-
-  const activeMetrics = getActiveMetrics();
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      const dataPoint = payload[0].payload;
-
-      return (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-4 shadow-2xl 
-        backdrop-blur-sm">
-          <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">
-            📅 Time: {label}
-          </p>
-          <div className="space-y-2">
-            {activeMetrics.map((metricType) => {
-              const value = dataPoint[metricType];
-              const count = dataPoint[`${metricType}_count`];
-              const values = dataPoint[`${metricType}_values`];
-              const config = dataPoint[`${metricType}_config`];
-
-              if (value === undefined) return null;
-
-              return (
-                <div
-                  key={metricType}
-                  className="flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-700"
-                >
-                  <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: config.color }}
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{config.icon}</span>
-                      <span className="font-semibold text-gray-900 dark:text-white">
-                        {config.label}
-                      </span>
-                    </div>
-                    {count > 1 ? (
-                      <div className="mt-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          Average: {value} {config.unit}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {count} entries: {values.join(", ")} {config.unit}
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
-                        {value} {config.unit}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
+  const activeMetrics = useActiveMetrics(chartData, selectedMetric);
 
   if (chartData.length === 0) {
     return (
@@ -311,7 +175,7 @@ export function MetricChart({
                 tickLine={false}
                 axisLine={false}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<ChartTooltip />} />
               {activeMetrics.map((metricType) => {
                 const config = getMetricConfig(metricType);
                 return (
@@ -366,7 +230,7 @@ export function MetricChart({
                 tickLine={false}
                 axisLine={false}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<ChartTooltip />} />
               {activeMetrics.map((metricType, index) => {
                 const config = getMetricConfig(metricType);
                 return (

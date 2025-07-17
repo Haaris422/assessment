@@ -119,13 +119,6 @@ export function Accordian({
                         >
                           <FaEdit className="text-lg cursor-pointer" />
                         </button>
-                        <button
-                          onClick={() => onDelete(`${entry.id}-${metric.type}`)}
-                          className="text-red-500 hover:text-red-700"
-                          title="Delete"
-                        >
-                          <FaTrash className="text-lg cursor-pointer" />
-                        </button>
                       </>
                     )}
                   </div>
