@@ -108,7 +108,8 @@ export function MetricChart({
       const dataPoint = payload[0].payload;
 
       return (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-4 shadow-2xl backdrop-blur-sm animate-fade-in">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-4 shadow-2xl 
+        backdrop-blur-sm">
           <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">
             📅 Time: {label}
           </p>
@@ -124,7 +125,7 @@ export function MetricChart({
               return (
                 <div
                   key={metricType}
-                  className="flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50"
+                  className="flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-700"
                 >
                   <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
@@ -291,7 +292,7 @@ export function MetricChart({
               </defs>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#E5E7EB"
+                stroke="#6B7280"
                 strokeOpacity={0.5}
                 className="dark:stroke-gray-600"
               />
@@ -311,7 +312,6 @@ export function MetricChart({
                 axisLine={false}
               />
               <Tooltip content={<CustomTooltip />} />
-              {selectedMetric === "all" && <Legend />}
               {activeMetrics.map((metricType) => {
                 const config = getMetricConfig(metricType);
                 return (
@@ -367,7 +367,6 @@ export function MetricChart({
                 axisLine={false}
               />
               <Tooltip content={<CustomTooltip />} />
-              {selectedMetric === "all" && <Legend />}
               {activeMetrics.map((metricType, index) => {
                 const config = getMetricConfig(metricType);
                 return (

@@ -39,34 +39,41 @@ export const metrics = [
     key: 'steps',
     label: 'Steps',
     unit: 'steps',
-    color: '#733e0a',
+    color: '#92400e',
     icon: '👟'
   },
   {
     key: 'waterIntake',
     label: 'Water Intake',
     unit: 'ml',
-    color: '#1c398e',
+    color: '#3b82f6',
     icon: '💧'
   },
   {
     key: 'heartRate',
     label: 'Heart Rate',
     unit: 'bpm',
-    color: '#82181a',
+    color: '#ef4444',
     icon: '❤️'
   },
   {
     key: 'calorieIntake',
     label: 'Calorie Intake',
     unit: 'kcal',
-    color: '#0d542b',
+    color: '#22c55e',
     icon: '⚖️'
   },
 ];
 
 export const getMetricConfig = (type) => {
   return metrics.find(m => m.key === type) || metrics[0];
+};
+
+export const validationRules = {
+  steps: { min: 0, max: 100000 },
+  waterIntake: { min: 0, max: 10000 },
+  heartRate: { min: 30, max: 220 },
+  calorieIntake: { min: 0, max: 10000 },
 };
 
 export const buttonStyle="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer";
