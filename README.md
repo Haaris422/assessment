@@ -6,14 +6,20 @@ This is a health metrics tracking application. It allows users to record and vis
 # Cloning & Setup 🚀
 
 1. Clone the repository
+```
 git clone https://github.com/Haaris422/assessment.git
+```
 
 2. Install dependencies
+```
 npm install
+```
+
 
 3. Start the development server
+```
 npm run dev
-
+```
 
 # Libraries Used & Why 📦
 
